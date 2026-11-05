@@ -1,0 +1,44 @@
+{
+  "name": "pff-calc",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "PFF Calc: verificação de perfis de aço formados a frio pela ABNT NBR 14762:2010",
+  "author": "José Barbalho",
+  "license": "MIT",
+  "homepage": "https://proestruturas3d.com.br",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/josebarbalho25-lang/PFF-Calc.git"
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "check": "tsc --noEmit",
+    "teste": "vitest run",
+    "instalador": "node instalador/construir.mjs"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
+    "@types/three": "^0.185.4",
+    "@vitejs/plugin-react": "^6.1.0",
+    "electron": "^45.2.3",
+    "electron-builder": "^26.18.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.2.2",
+    "vitest": "^4.1.11"
+  }
+}

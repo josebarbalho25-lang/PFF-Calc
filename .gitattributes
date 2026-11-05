@@ -1,0 +1,3 @@
+# O .bat vai com o fim de linha do Windows, guardado como está: com o fim de
+# linha do Linux o cmd perde os rótulos (goto) no meio do arquivo.
+*.bat -text

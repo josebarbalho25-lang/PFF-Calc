@@ -1,0 +1,299 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   componentes.css — os controles do A-PORT que a calculadora usa
+   ---------------------------------------------------------------------------
+   Copiados de `Pórtico Estrutural/src/estilo/componentes.css` e `layout.css`,
+   bloco a bloco, sem mudar medida nem cor: campo, segmentado, botões, pílula,
+   janela, a moldura com legenda na linha (.cad-bloco) e a linha rótulo–valor
+   (.cad-linha). Quando a calculadora entrar no A-PORT, este arquivo some e
+   vale o de lá — por isso aqui não nasce variação.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── CAMPOS ─────────────────────────────────────────────────────────────── */
+
+.campo,
+select.campo {
+  width: 100%;
+  height: var(--row);
+  background: var(--surface-2);
+  border: 1px solid var(--control-stroke);
+  border-bottom-color: var(--control-stroke-2);
+  border-radius: var(--radius-md);
+  padding: 0 7px;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-corpo);
+}
+.campo:hover:not(:focus) {
+  background: var(--surface);
+}
+.campo:focus {
+  background: var(--surface);
+  border-color: var(--control-stroke);
+  border-bottom-color: transparent;
+  box-shadow: inset 0 -2px 0 0 var(--accent-3);
+}
+.campo:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.campo.texto {
+  font-family: var(--font-ui);
+  font-size: var(--fs-corpo);
+}
+.campo.errado {
+  box-shadow: inset 0 -2px 0 0 var(--err);
+}
+select.campo {
+  appearance: none;
+  cursor: pointer;
+  padding-right: 22px;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position:
+    calc(100% - 12px) calc(50% + 1px),
+    calc(100% - 8px) calc(50% + 1px);
+  background-size:
+    4px 4px,
+    4px 4px;
+  background-repeat: no-repeat;
+}
+/* O menu que abre é desenhado pelo SISTEMA: sem fundo próprio ele sai claro,
+   e o texto vai com a cor clara do tema — branco no branco (armadilha paga no
+   A-PORT). */
+select.campo option {
+  background-color: var(--surface);
+  color: var(--ink);
+}
+
+/* ── SEGMENTADO ─────────────────────────────────────────────────────────── */
+
+.seg {
+  display: inline-flex;
+  background: var(--surface-2);
+  border: 1px solid var(--control-stroke);
+  border-radius: var(--radius-md);
+  padding: 2px;
+  gap: 2px;
+}
+.seg button {
+  height: calc(var(--row) - 6px);
+  padding: 0 10px;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-rotulo);
+  font-weight: 500;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  transition:
+    color 0.12s ease,
+    background 0.12s ease;
+}
+.seg button:hover {
+  color: var(--ink-2);
+}
+.seg button.on {
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--control-stroke);
+}
+body[data-theme='dark'] .seg button.on {
+  background: var(--line-strong);
+  box-shadow: none;
+}
+
+/* ── BOTÕES ─────────────────────────────────────────────────────────────── */
+
+.btn-primario {
+  height: calc(30px * var(--escala-ui));
+  padding: 0 14px;
+  background: var(--accent);
+  color: var(--on-accent);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-corpo);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+.btn-primario:hover {
+  background: color-mix(in srgb, var(--accent) 88%, #ffffff);
+}
+.btn-primario:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.btn-fantasma {
+  height: calc(28px * var(--escala-ui));
+  padding: 0 11px;
+  border: 1px solid var(--control-stroke);
+  border-bottom-color: var(--control-stroke-2);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: var(--fs-rotulo);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-fantasma:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+.btn-fantasma:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.btn-icone {
+  width: calc(30px * var(--escala-ui));
+  height: calc(30px * var(--escala-ui));
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  color: var(--muted);
+}
+.btn-icone:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+.btn-icone.on {
+  color: var(--accent-3);
+  background: var(--sel-bg);
+}
+
+/* ── PÍLULA (a cor vem toda de currentColor — serve nos 3 temas) ─────────── */
+
+.pilula {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: calc(17px * var(--escala-ui));
+  padding: 0 7px;
+  border-radius: 99px;
+  font-size: var(--fs-nota);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid color-mix(in srgb, currentColor 28%, transparent);
+  background: color-mix(in srgb, currentColor 9%, transparent);
+}
+
+/* ── JANELA ─────────────────────────────────────────────────────────────── */
+
+.modal-fundo {
+  position: fixed;
+  inset: 0;
+  background: var(--scrim);
+  backdrop-filter: blur(2px);
+  display: grid;
+  place-items: center;
+  z-index: 60;
+}
+.modal-caixa {
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-2);
+  animation: entrarModal 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+/* Sem a entrada animada quando o sistema pede menos movimento — e é assim que
+   o print sem janela (scripts/prints.ps1) a pede, para não fotografar a janela
+   ainda meio transparente. */
+@media (prefers-reduced-motion: reduce) {
+  .modal-caixa {
+    animation: none;
+  }
+}
+@keyframes entrarModal {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.99);
+  }
+}
+.modal-cabeca {
+  height: calc(44px * var(--escala-ui));
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px 0 16px;
+  border-bottom: 1px solid var(--line);
+}
+.modal-cabeca h3 {
+  flex: 1;
+  font-family: var(--font-serif);
+  font-size: var(--fs-titulo);
+  font-weight: 500;
+}
+.modal-rodape {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-top: 1px solid var(--line);
+}
+
+/* ── a moldura com legenda NA LINHA ───────────────────────────────────────
+   A assinatura do diálogo de engenharia. Um cartão com sombra no lugar dela é
+   exatamente a cara de SaaS que ele mandou evitar. */
+.cad-bloco {
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: calc(4px * var(--escala-ui)) calc(12px * var(--escala-ui)) calc(9px * var(--escala-ui));
+  margin-top: calc(12px * var(--escala-ui));
+  min-width: 0;
+}
+.cad-bloco > legend {
+  padding: 0 calc(5px * var(--escala-ui));
+  font-size: var(--fs-nota);
+  color: var(--accent-3);
+  letter-spacing: 0.01em;
+}
+
+/* ── a linha: rótulo à esquerda, valor numa coluna só ───────────────────── */
+.cad-linha {
+  display: grid;
+  grid-template-columns: 1fr calc(160px * var(--escala-ui));
+  align-items: center;
+  gap: calc(10px * var(--escala-ui));
+  min-height: calc(26px * var(--escala-ui));
+}
+.cad-linha > label {
+  font-size: var(--fs-rotulo);
+  color: var(--ink-2);
+}
+.cad-valor {
+  display: flex;
+  align-items: center;
+  gap: calc(4px * var(--escala-ui));
+}
+.cad-valor > .campo,
+.cad-valor > select.campo {
+  flex: 1;
+  min-width: 0;
+}
+/* A unidade fica FORA do campo, como na foto: o número fica só com o número. */
+.cad-valor > .unidade {
+  flex: 0 0 auto;
+  width: calc(34px * var(--escala-ui));
+  font-size: var(--fs-nota);
+  color: var(--muted);
+}
+.cad-valor > .valor-derivado {
+  flex: 1;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--fs-rotulo);
+  color: var(--muted);
+}

@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.vite/
+*.local
+.termo-aceito
+# o instalador gerado (npm run instalador)
+instalador/saida/

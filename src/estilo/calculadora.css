@@ -1,0 +1,1174 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   calculadora.css — o arranjo da calculadora: barra do topo, duas colunas,
+   barra de estado, e as peças que só ela tem (seção, aproveitamento,
+   janelas). Cor só por token — nenhum hex nasce aqui.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* A fonte das fórmulas: a serifa do tema (Fraunces, com Georgia de reserva)
+   tem algarismos de texto, que sobem e descem — "1 555,6" vira uma linha
+   torta. A Cambria do Windows tem algarismos alinhados, como na memória. */
+:root {
+  --font-formula: 'Cambria Math', Cambria, 'Times New Roman', serif;
+}
+
+.app {
+  height: 100%;
+  display: grid;
+  grid-template-rows: var(--topbar-h) 1fr var(--status-h);
+  grid-template-areas: 'topbar' 'colunas' 'status';
+}
+
+/* ── TOPO ───────────────────────────────────────────────────────────────── */
+
+.topbar {
+  grid-area: topbar;
+  background: var(--surface);
+  background-image: var(--speckle-soft);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 12px 0 10px;
+}
+.topbar .marca-app {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: var(--fs-destaque);
+  letter-spacing: 0.02em;
+  padding-right: 14px;
+  border-right: 1px solid var(--line);
+}
+.topbar .titulo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+.topbar .titulo h1 {
+  font-size: var(--fs-destaque);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.topbar .titulo .sub {
+  font-size: var(--fs-nota);
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+.topbar .direita {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.configuracao {
+  position: relative;
+}
+.painel-config {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 50;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-2);
+}
+.painel-config .segmentado button {
+  font-style: normal;
+}
+/* As marcas dele, só na tela: o glifo da calculadora no alto e
+   public/logo-autor.png no rodapé (como na 8800). Sem o arquivo, o img some
+   (onError) — nada de ícone de imagem quebrada.
+   ⚠️ TAMANHO MEDIDO NO PRINT (04/11): o quadrado de 28 px deixava o arco com
+   traço de 1 px, e a ponte na altura do texto virava um "+". O glifo sem
+   fundo resolve o traço; a ponte vai a 27 px, e as duas barras cresceram
+   para caber. A aba continua com o ícone quadrado. */
+.topbar .glifo-calculadora {
+  /* 28 px, como o I da 8800 (pedido dele, 04/11): sem a barra branca do
+     Windows, o arco de 38 px encostava na borda de cima da janela. Centrado
+     no cabeçalho de 49 px, com a folga da esquerda igual à de cima e à de
+     baixo (~10 px). */
+  height: 28px;
+  width: auto;
+  margin-right: 12px;
+}
+body[data-theme='dark'] .topbar .glifo-calculadora.azul,
+body:not([data-theme='dark']) .topbar .glifo-calculadora.branco {
+  display: none;
+}
+.statusbar a.site {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  text-decoration: none;
+}
+.statusbar a.site .logo-autor {
+  height: 27px;
+  width: auto;
+}
+.statusbar .site:hover {
+  color: var(--accent-3);
+  text-decoration: underline;
+}
+.painel-config .segmentado.temas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.painel-config .segmentado.temas button {
+  padding: 5px 0;
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+}
+.painel-config .segmentado.temas button:last-child {
+  border-right: 0;
+}
+.painel-config .segmentado.temas button:hover {
+  color: var(--ink);
+}
+.painel-config .segmentado.temas button.ativo {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--ink);
+  font-weight: 600;
+}
+.botao-config {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin-left: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.botao-config:hover,
+.botao-config.ativo {
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+.interacao-3d {
+  height: calc(420px * var(--escala-ui));
+}
+.razao-geral {
+  font-size: var(--fs-destaque);
+  color: var(--ink-2);
+}
+.situacao-geral.atende,
+.estado-pdf.pronto {
+  color: var(--ok);
+}
+.situacao-geral.avaliar {
+  color: var(--warn);
+}
+.situacao-geral.naoAtende,
+.estado-pdf.falhou {
+  color: var(--err);
+}
+.estado-pdf.imprimindo {
+  color: var(--muted);
+}
+
+/* ── COLUNAS ────────────────────────────────────────────────────────────── */
+
+.colunas {
+  grid-area: colunas;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: calc(372px * var(--escala-ui)) 1fr;
+}
+.coluna-esquerda {
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+  padding: 2px 14px 16px;
+}
+.coluna-direita {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 2px 18px 16px;
+}
+
+/* O (?) ao lado do rótulo: pequeno, redondo, acende no azul da ênfase. */
+.cad-linha > label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-ajuda {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid var(--control-stroke-2);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  display: inline-grid;
+  place-items: center;
+  margin-left: auto;
+}
+.btn-ajuda:hover {
+  color: var(--accent-3);
+  border-color: var(--accent-3);
+  background: var(--sel-bg);
+}
+.campo.numero {
+  text-align: right;
+}
+
+/* ── SELETOR DE PERFIL ──────────────────────────────────────────────────── */
+
+.seletor-perfil {
+  position: relative;
+  margin-top: 4px;
+}
+.seletor-perfil .campo {
+  font-weight: 600;
+}
+.seletor-lista {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  max-height: calc(320px * var(--escala-ui));
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-2);
+  z-index: 20;
+  padding: 3px 0;
+}
+.seletor-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: calc(24px * var(--escala-ui));
+  padding: 0 9px;
+  cursor: pointer;
+  font-size: var(--fs-corpo);
+}
+.seletor-item.marcado {
+  background: var(--sel-bg);
+}
+.seletor-item.atual .nome {
+  color: var(--accent-3);
+  font-weight: 600;
+}
+.seletor-item .dims {
+  font-family: var(--font-mono);
+  font-size: var(--fs-nota);
+  color: var(--muted);
+}
+.seletor-vazio {
+  padding: 4px 9px;
+  color: var(--muted);
+}
+
+/* ── SEÇÃO + PROPRIEDADES ───────────────────────────────────────────────── */
+
+.secao-e-props {
+  display: grid;
+  grid-template-columns: minmax(280px, 440px) minmax(320px, 1fr);
+  gap: 16px;
+  align-items: center;
+}
+.secao-desenho {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 6px;
+}
+.secao-perfil {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.sec-corpo {
+  fill: color-mix(in srgb, var(--peca-aco) 55%, var(--bg));
+  stroke: var(--ink-2);
+  stroke-width: 1.2;
+}
+/* Seção em pedaços: o traço dobrado por baixo e o miolo por cima — sobra só
+   a metade de fora do traço, e as emendas internas somem. */
+.sec-corpo.emendado {
+  stroke-width: 2.4;
+}
+.sec-miolo {
+  fill: color-mix(in srgb, var(--peca-aco) 55%, var(--bg));
+  stroke: none;
+}
+.sec-cota,
+.sec-traco {
+  stroke: var(--ink-2);
+  stroke-width: 0.8;
+}
+.sec-chamada {
+  stroke: var(--muted-2);
+  stroke-width: 0.6;
+}
+.sec-eixo {
+  stroke: var(--accent-3);
+  stroke-width: 0.8;
+  stroke-dasharray: 10 3 2 3;
+}
+.sec-texto-cota {
+  font: 11px var(--font-mono);
+  fill: var(--ink);
+}
+.sec-texto-cota .simbolo {
+  font-family: var(--font-formula);
+  font-style: italic;
+}
+.sec-texto-cota .indice {
+  font-size: 8px;
+}
+.sec-texto-eixo {
+  font: italic 13px var(--font-formula);
+  fill: var(--accent-3);
+}
+
+.props {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 18px;
+}
+.prop {
+  display: grid;
+  grid-template-columns: 34px 1fr 38px;
+  align-items: baseline;
+  gap: 6px;
+  min-height: calc(22px * var(--escala-ui));
+  border-bottom: 1px solid var(--line-2);
+  font-size: var(--fs-rotulo);
+}
+.prop-rotulo {
+  color: var(--ink-2);
+  font-family: var(--font-formula);
+}
+.prop-valor {
+  font-family: var(--font-mono);
+  text-align: right;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.prop-un {
+  font-size: var(--fs-nota);
+  color: var(--muted);
+}
+
+/* ── APROVEITAMENTO ─────────────────────────────────────────────────────── */
+
+.aprov-cabeca,
+.card-cabeca {
+  display: grid;
+  grid-template-columns: calc(150px * var(--escala-ui)) 1fr calc(54px * var(--escala-ui)) calc(170px * var(--escala-ui)) calc(150px * var(--escala-ui));
+  align-items: center;
+  gap: 12px;
+}
+.aprov-cabeca {
+  font-size: var(--fs-nota);
+  color: var(--muted);
+  padding: 2px 8px 4px;
+}
+.aprov-col {
+  text-align: right;
+}
+.aprov-col.esq {
+  text-align: left;
+}
+.card-verif {
+  border-top: 1px solid var(--line-2);
+}
+.card-cabeca {
+  width: 100%;
+  min-height: calc(32px * var(--escala-ui));
+  padding: 0 8px;
+  text-align: left;
+  border-radius: var(--radius-sm);
+}
+.card-cabeca:hover {
+  background: var(--surface-2);
+}
+.card-verif.aberta > .card-cabeca {
+  background: var(--surface-2);
+}
+.card-nome {
+  font-size: var(--fs-corpo);
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+.card-item {
+  font-size: var(--fs-nota);
+  font-weight: 400;
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+.card-razao {
+  font-family: var(--font-mono);
+  font-size: var(--fs-destaque);
+  text-align: right;
+  font-weight: 600;
+}
+.card-verif.atende .card-razao {
+  color: var(--ok);
+}
+.card-verif.avaliar .card-razao {
+  color: var(--warn);
+}
+.card-verif.naoAtende .card-razao {
+  color: var(--err);
+}
+.card-valores {
+  font-family: var(--font-mono);
+  font-size: var(--fs-rotulo);
+  text-align: right;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.card-valores .nevoa,
+.card-valores .unidade {
+  color: var(--muted);
+}
+.card-governa {
+  font-size: var(--fs-nota);
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.barra-aprov .trilha {
+  position: relative;
+  height: 8px;
+  border-radius: 99px;
+  background: var(--line-2);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.barra-aprov .enchimento {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.25s ease;
+}
+.barra-aprov.atende .enchimento {
+  background: var(--ok);
+}
+.barra-aprov.avaliar .enchimento {
+  background: var(--warn);
+}
+.barra-aprov.naoAtende .enchimento {
+  background: var(--err);
+}
+
+/* O detalhe aberto: as contas da memória, na tinta do tema. */
+.card-corpo {
+  padding: 6px 8px 12px;
+  background: var(--surface-2);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+.card-aviso {
+  font-size: var(--fs-rotulo);
+  color: var(--warn);
+  border-left: 2px solid var(--warn);
+  padding: 2px 8px;
+  margin: 4px 0 8px;
+}
+.card-passo {
+  display: grid;
+  grid-template-columns: calc(120px * var(--escala-ui)) 1fr;
+  gap: 12px;
+  padding: 6px 0;
+  border-top: 1px solid var(--line-2);
+}
+.card-passo:first-of-type {
+  border-top: 0;
+}
+.card-passo-ref {
+  font-size: var(--fs-nota);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  padding-top: 3px;
+}
+.card-passo-titulo {
+  font-size: var(--fs-rotulo);
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-bottom: 2px;
+}
+.card-corpo .eq {
+  font-family: var(--font-formula);
+  font-size: var(--fs-corpo);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  column-gap: 6px;
+  row-gap: 2px;
+  padding: 2px 0 2px 6px;
+}
+.card-corpo .eq .res {
+  font-weight: 700;
+}
+.card-corpo .eq .lbl {
+  font-family: var(--font-ui);
+  font-size: var(--fs-nota);
+  color: var(--muted);
+  margin-left: auto;
+  padding-left: 12px;
+}
+.card-corpo .frac,
+.janela-didatica .frac {
+  display: inline-flex;
+  flex-direction: column;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.25;
+}
+.card-corpo .frac > span:first-child,
+.janela-didatica .frac > span:first-child {
+  border-bottom: 1px solid currentColor;
+  padding: 0 0.25em 0.1em;
+}
+.card-corpo .frac > span:last-child,
+.janela-didatica .frac > span:last-child {
+  padding: 0.1em 0.25em 0;
+}
+/* A raiz é o sinal desenhado (expr.ts) ao lado do conteúdo: os dois esticam
+   juntos, e o traço de cima passa por cima da fração inteira. */
+.card-corpo .rad {
+  --traco-raiz: 1px;
+  display: inline-flex;
+  align-items: stretch;
+  vertical-align: middle;
+  line-height: 1.25;
+  margin-left: 0.05em;
+}
+.card-corpo .rad-sinal {
+  position: relative;
+  flex: none;
+  width: 0.6em;
+}
+.card-corpo .rad-sinal svg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: calc(var(--traco-raiz) / 2);
+  width: 100%;
+  height: calc(100% - var(--traco-raiz) / 2);
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--traco-raiz);
+  stroke-linejoin: round;
+}
+.card-corpo .raiz {
+  border-top: var(--traco-raiz) solid currentColor;
+  padding: 0.12em 0.1em 0 0.12em;
+}
+.card-corpo .nota-tab {
+  font-size: var(--fs-nota);
+  color: var(--muted);
+  padding-left: 6px;
+}
+
+/* ── AÇÕES ──────────────────────────────────────────────────────────────── */
+
+.acoes,
+.memoria-acoes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+.recado {
+  font-size: var(--fs-rotulo);
+  color: var(--ok);
+}
+.recado.erro {
+  color: var(--err);
+}
+
+/* ── BARRA DE ESTADO ────────────────────────────────────────────────────── */
+
+.statusbar {
+  grid-area: status;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 12px;
+  font-size: var(--fs-rotulo);
+  color: var(--muted);
+}
+.statusbar .campo-estado {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.statusbar .valor {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}
+.statusbar .campo-estado.alarme {
+  color: var(--err);
+  background: color-mix(in srgb, var(--err) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--err) 45%, transparent);
+  border-radius: 4px;
+  padding: 1px 7px;
+}
+.statusbar .campo-estado.alarme .valor {
+  color: var(--err);
+  font-weight: 600;
+}
+.statusbar .direita {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ── JANELA DA MEMÓRIA ──────────────────────────────────────────────────── */
+
+.janela-memoria {
+  width: min(1280px, 96vw);
+  height: 92vh;
+}
+.memoria-corpo {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr calc(340px * var(--escala-ui));
+}
+.memoria-previa {
+  min-height: 0;
+  background: var(--bg);
+}
+.memoria-previa iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+.memoria-lado {
+  border-left: 1px solid var(--line);
+  padding: 2px 14px 14px;
+  overflow-y: auto;
+}
+.cad-linha.linha-texto {
+  grid-template-columns: calc(110px * var(--escala-ui)) 1fr;
+}
+
+/* ── JANELA DIDÁTICA ────────────────────────────────────────────────────── */
+
+.janela-didatica {
+  width: min(1100px, 94vw);
+  height: min(720px, 90vh);
+}
+.didatica-abas {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.didatica-corpo {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr calc(300px * var(--escala-ui));
+}
+.didatica-palco {
+  position: relative;
+  min-height: 0;
+  background: var(--bg);
+}
+/* A aba do distorcional não tem cena 3D: o palco recebe o painel de curva e
+   modo da tela principal, que precisa de margem e de rolagem próprias. */
+.didatica-corpo.larga .didatica-palco {
+  padding: 12px 16px;
+  overflow-y: auto;
+}
+.didatica-palco canvas {
+  display: block;
+}
+.didatica-lado {
+  border-left: 1px solid var(--line);
+  padding: 2px 14px 14px;
+  overflow-y: auto;
+  font-size: var(--fs-rotulo);
+}
+.rotulo-3d {
+  font: 600 12px var(--font-ui);
+  color: var(--ink);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 1px 6px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.rotulo-3d.cota {
+  font-family: var(--font-mono);
+  color: var(--accent-3);
+}
+.rotulo-3d.trava {
+  color: var(--carga-1);
+}
+.rotulo-3d.eixo {
+  font: italic 600 15px var(--font-formula);
+  color: var(--accent-3);
+  background: none;
+  border: 0;
+}
+.rotulo-3d.esforco {
+  font: italic 600 14px var(--font-formula);
+  color: var(--carga-1);
+}
+.palco-cb {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.palco-cb > svg {
+  flex: 1;
+  min-height: 0;
+}
+.formula-cb {
+  justify-content: center;
+  padding: 0 18px 18px;
+  font-family: var(--font-formula);
+  font-size: var(--fs-destaque);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+}
+.formula-cb .ref {
+  font-family: var(--font-mono);
+  font-size: var(--fs-nota);
+  color: var(--muted);
+  margin-left: 10px;
+}
+
+/* ── DESENHOS 2D DAS JANELAS (Cb e cisalhamento) ────────────────────────── */
+
+.diagrama-cb,
+.painel-cisalhamento {
+  display: block;
+  padding: 18px;
+}
+.cb-viga {
+  fill: color-mix(in srgb, var(--peca-aco) 60%, var(--bg));
+  stroke: var(--ink-2);
+  stroke-width: 1;
+}
+.cb-trava {
+  stroke: var(--carga-1);
+  stroke-width: 3;
+}
+.cb-eixo {
+  stroke: var(--ink-2);
+  stroke-width: 1;
+}
+.cb-engaste line {
+  stroke: var(--ink-2);
+  stroke-width: 1;
+}
+.cb-diagrama {
+  fill: color-mix(in srgb, var(--carga-2) 22%, transparent);
+}
+.cb-contorno {
+  fill: none;
+  stroke: var(--carga-2);
+  stroke-width: 2;
+}
+.cb-secao {
+  stroke: var(--muted-2);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+}
+.cb-ponto {
+  fill: var(--carga-2);
+}
+.cb-max {
+  fill: none;
+  stroke: var(--err);
+  stroke-width: 2;
+}
+.cb-rotulo {
+  font: 14px var(--font-formula);
+  font-style: italic;
+  fill: var(--ink);
+}
+.cb-rotulo.max {
+  fill: var(--err);
+}
+.cb-cota {
+  stroke: var(--accent-3);
+  stroke-width: 1;
+}
+.cb-cota-texto {
+  font: 12px var(--font-mono);
+  fill: var(--accent-3);
+}
+
+.cis-alma {
+  fill: color-mix(in srgb, var(--peca-aco) 35%, var(--bg));
+  stroke: var(--ink-2);
+  stroke-width: 1;
+}
+.cis-mesa {
+  fill: color-mix(in srgb, var(--peca-aco) 70%, var(--bg));
+  stroke: var(--ink-2);
+  stroke-width: 1;
+}
+.cis-enrijecedor {
+  stroke: var(--carga-1);
+  stroke-width: 6;
+}
+.cis-tracao {
+  stroke: var(--err);
+  stroke-width: 2;
+}
+.cis-onda {
+  fill: none;
+  stroke: var(--warn);
+  stroke-width: 2;
+}
+.cis-cota {
+  stroke: var(--accent-3);
+  stroke-width: 1;
+}
+.cis-cota-texto {
+  font: italic 15px var(--font-formula);
+  fill: var(--accent-3);
+}
+.cis-seta {
+  stroke: var(--carga-2);
+  stroke-width: 2.5;
+  fill: none;
+}
+.cis-ponta {
+  fill: var(--carga-2);
+}
+.didatica-lado input[type='range'] {
+  flex: 1;
+  accent-color: var(--accent-3);
+}
+
+/* ── PERFIL FORMADO A FRIO: eixos principais, centroide, centro de torção ── */
+
+.sec-eixo-principal {
+  stroke: var(--muted-2);
+  stroke-width: 0.7;
+  stroke-dasharray: 6 4;
+}
+.sec-centroide circle {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1;
+}
+.sec-centroide path {
+  fill: var(--ink);
+}
+.sec-torcao circle {
+  fill: var(--bg);
+  stroke: var(--accent-3);
+  stroke-width: 1.4;
+}
+.sec-torcao line {
+  stroke: var(--accent-3);
+  stroke-width: 1;
+}
+.sec-texto-centro {
+  font: 600 11px var(--font-mono);
+  fill: var(--ink-2);
+}
+.prop-papel {
+  font-family: var(--font-ui);
+  font-size: var(--fs-nota);
+  color: var(--muted);
+}
+/* O editor da seção desenhada, no alto da coluna dos resultados. */
+.caixa-do-desenho {
+  height: calc(500px * var(--escala-ui));
+  margin: calc(10px * var(--escala-ui)) 0 calc(14px * var(--escala-ui));
+}
+.secao-erro {
+  padding: 12px;
+  color: var(--err);
+  font-family: var(--font-mono);
+}
+.titulo-bloco {
+  font-size: var(--fs-destaque);
+  font-weight: 600;
+  margin: 12px 0 10px;
+}
+
+/* ── FLAMBAGEM ELÁSTICA: curva de assinatura e modo ─────────────────────── */
+
+.flambagem.calculando {
+  opacity: 0.55;
+}
+.flambagem-controles {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.segmentado {
+  display: inline-flex;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.segmentado button {
+  min-width: 40px;
+  height: calc(24px * var(--escala-ui));
+  padding: 0 10px;
+  font-family: var(--font-formula);
+  font-style: italic;
+  color: var(--ink-2);
+}
+.segmentado button + button {
+  border-left: 1px solid var(--line-strong);
+}
+.segmentado button.ativo {
+  background: var(--sel-bg);
+  color: var(--accent-3);
+}
+.flambagem-corpo {
+  display: grid;
+  grid-template-columns: minmax(360px, 560px) minmax(220px, 300px);
+  gap: 16px;
+  align-items: start;
+}
+.flambagem-curva {
+  display: grid;
+  gap: 10px;
+}
+.curva-moldura {
+  pointer-events: all;
+  cursor: crosshair;
+}
+.curva-linha {
+  /* o clique na linha passa para a moldura de baixo (revisão de 04/11) */
+  pointer-events: none;
+}
+.curva-ponto {
+  fill: var(--accent-3);
+  stroke: var(--bg);
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+/* O 3D do modo, embaixo da curva: a barra em faixas e a legenda do jet. */
+.modo-barra-3d {
+  position: relative;
+  height: calc(300px * var(--escala-ui));
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+.legenda-jet {
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  bottom: 12px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mini, 11px);
+  color: var(--ink-2);
+  pointer-events: none;
+}
+.legenda-jet-barra {
+  width: 10px;
+  border: 1px solid var(--line-strong);
+  /* o mapa jet (dado, não tema): igual ao de barraDoModo.ts */
+  background: linear-gradient(to top, #00007f, #0000ff, #00ffff, #80ff80, #ffff00, #ff0000, #7f0000);
+}
+.flambagem-lado {
+  display: grid;
+  gap: 8px;
+}
+.props.uma-coluna {
+  grid-template-columns: 1fr;
+}
+.curva-assinatura,
+.modo-secao {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+.curva-grade {
+  stroke: var(--line-2);
+  stroke-width: 0.6;
+}
+.curva-moldura {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 0.8;
+}
+.curva-tique {
+  font: 10px var(--font-mono);
+  fill: var(--muted);
+}
+.curva-eixo {
+  font: italic 11px var(--font-formula);
+  fill: var(--ink-2);
+}
+.curva-linha {
+  fill: none;
+  stroke: var(--accent-3);
+  stroke-width: 1.6;
+}
+.curva-linha.inversa {
+  stroke: var(--muted-2);
+  stroke-width: 1;
+  stroke-dasharray: 5 4;
+}
+.curva-minimo {
+  cursor: pointer;
+}
+.curva-minimo circle {
+  fill: var(--bg);
+  stroke-width: 1.8;
+}
+.curva-minimo.local circle {
+  stroke: var(--ok);
+}
+.curva-minimo.distorcional circle {
+  stroke: var(--warn);
+}
+.curva-minimo.global circle {
+  stroke: var(--muted);
+}
+.curva-minimo.escolhido circle {
+  fill: currentColor;
+}
+.curva-minimo.local.escolhido circle {
+  fill: var(--ok);
+}
+.curva-minimo.distorcional.escolhido circle {
+  fill: var(--warn);
+}
+.curva-minimo text {
+  font: 10px var(--font-mono);
+  fill: var(--ink);
+}
+.curva-minimo .curva-meiaonda {
+  fill: var(--muted);
+}
+.modo-parada {
+  fill: none;
+  stroke: var(--muted-2);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+.modo-deformada {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+.prop.largo {
+  grid-template-columns: 44px 1fr 110px;
+}
+.card-nota {
+  margin: 4px 8px;
+  font-size: var(--fs-nota);
+  color: var(--muted);
+}
+
+/* ── TELA DE ERRO DA RAIZ ───────────────────────────────────────────────── */
+.tela-de-erro {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: var(--bg);
+}
+
+/* ── Anexo F: a caixa de ligar na legenda, as condições declaradas em lista ── */
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-rotulo);
+  color: var(--ink-2);
+  cursor: pointer;
+}
+.marca > input {
+  accent-color: var(--accent);
+  margin: 0;
+}
+.anexo-f legend .marca {
+  color: inherit;
+  font-size: inherit;
+}
+.anexo-f .segmentado {
+  justify-self: stretch;
+  display: flex;
+}
+.anexo-f .segmentado > button {
+  flex: 1;
+  font-family: var(--font-ui);
+  font-style: normal;
+}
+.anexo-f .declaradas {
+  display: grid;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+/* ── Programa instalado: sem a barra de título do Windows ──────────────────
+   (html.programa, posto por ui/barraDaJanela.ts; no navegador não vale.) O
+   cabeçalho é a área de arrastar a janela, e o duplo clique nele maximiza,
+   como numa barra de título. À direita fica a folga dos três botões do
+   Windows, que o programa desenha por cima: env(titlebar-area-width) é a
+   largura livre do cabeçalho, sem eles — o mesmo jeito do Pró-Viga 3D. */
+html.programa .topbar {
+  -webkit-app-region: drag;
+  padding-right: max(12px, calc(100vw - env(titlebar-area-width, 100vw) + 12px));
+}
+html.programa .topbar button,
+html.programa .topbar input,
+html.programa .topbar select,
+html.programa .topbar a,
+html.programa .topbar .direita,
+html.programa .topbar .direita *,
+html.programa .topbar .painel-config,
+html.programa .topbar .painel-config * {
+  -webkit-app-region: no-drag;
+}

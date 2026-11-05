@@ -1,0 +1,11 @@
+{
+  "nome": "PFF Calc",
+  "titulo": "PFF Calc · NBR 14762",
+  "descricao": "Verificação de perfis de aço formados a frio pela ABNT NBR 14762:2010",
+  "appId": "br.com.proestruturas3d.pffcalc",
+  "pacote": "pff-calc",
+  "icone": "icone.ico",
+  "termo": "../TERMO-DE-RESPONSABILIDADE.md",
+  "autor": "José Barbalho",
+  "site": "https://proestruturas3d.com.br"
+}
